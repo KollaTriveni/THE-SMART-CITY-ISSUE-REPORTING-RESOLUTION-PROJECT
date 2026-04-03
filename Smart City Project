@@ -1,0 +1,1001 @@
+THE SMART CITY ISSUE REPORTING & RESOLUTION PROJECT
+
+BRD (Business Requirements Document):
+This project implements a Smart City Issue Tracking system within Salesforce using standard configuration tools. Instead of using a public portal, cases are created internally by an administrator using record types for new or reopened issues. The system ensures proper routing, status tracking using assignment rules, validation rules, workflows, and dashboards.
+Objective:
+The objective of this project is to build a centralized issue tracking system within Salesforce where municipal administrators can log, track, and resolve civic complaints reported by citizens. The system utilizes standard Salesforce automation to route cases to correct departments, trigger status update emails to citizens, enforce business rules around case reopening, and provide real-time dashboard analytics for city management.
+Components:
+o	Standard Case Object
+o	Customized page layout
+o	Assignment Rules
+o	Workflows
+o	Report type
+o	Validation rules
+o	Email Alerts
+o	Custom fields
+o	Queues
+o	Permission Sets
+o	Reports and Dashboards
+
+
+	STEP 1: Create Developer Org
+	STEP 2: Enable Support Settings
+	STEP 3: Create 9 Custom Fields on Case
+	STEP 4: Create 2 Record Types
+	STEP 5: Create 5 Queues (Departments)
+	STEP 6: Create 2 Page Layouts (drag custom fields in)
+	STEP 7: Assign Page Layouts to Record Types
+	STEP 8: Create Assignment Rule with 8 entries → ACTIVATE
+	STEP 9: Create 3 Email Templates
+	STEP 10: Create 3 Email Alerts
+	STEP 11: Create 3 Workflow Rules → ACTIVATE all 3
+	STEP 12: Create Validation Rule → Check Active
+	STEP 13: Create Permission Set → Assign to your user
+	STEP 14: Create 4 Reports
+	STEP 15: Create Dashboard with 4 components
+	STEP 16: Test everything!
+ 
+
+PHASE 1 — GET STARTED WITH SALESFORCE
+✅ STEP 1: Create Your Free Salesforce Developer Account
+A Developer Org is a 100% free Salesforce environment where you can build and test everything without paying anything.
+1.1	— Sign Up 
+1.Open your browser and go to: 👉 https://developer.salesforce.com/signup
+2.Fill in the form exactly like this:
+Field	What to Enter
+First Name	Kolla 
+Last Name	Triveni
+Email	Kolla.triveni2004@gmail.com
+Role	 Student
+Company	Pragati Engineering College
+Country	India
+  
+     3.Click the Sign me up button
+          4.Create a strong password (must have uppercase + number + symbol)
+          5.Set a security question + answer
+    6.Click Change Password
+        ✅ You are now inside your Salesforce Org! Welcome!
+1.2	— Understand the Salesforce Screen
+ When you log in, you see:
+Setup is where ALL your configuration happens. To go to Setup: Click the ⚙️ gear icon → Click Setup You will use Setup for EVERY step in this guide.
+ 
+ 
+
+PHASE 2 — ENABLE CASE SETTINGS
+✅ STEP 2: Enable Case Management Features
+1.	Click ⚙️ gear icon (top right corner)
+2.	Click Setup
+3.	In the left panel, find the white search box that says Quick Find
+4.	Type: Support Settings
+5.	Click Support Settings from the results
+6.	Make sure these boxes are checked (✅):
+•	Enable Case Feed
+•	Notify Case Owner When Cases are Manually Reassigned
+•	Show Closed Cases in Case List Views
+7.	Click Save (blue button at the top or bottom)
+2.2 — Add "In Progress" Status and Unhide "Closed"
+First, unhide the "Closed" status:
+1.	Still on the Support Settings page, click the Edit button.
+2.	Scroll down and check the box for: ✅ Show Closed Statuses in Case Status Field
+3.	Click Save.
+Second, add the "In Progress" option:
+1.	Go to Setup → Object Manager at the top.
+2.	Click on Case.
+3.	Click on Fields & Relationships on the left.
+4.	Find and click on the Status field.
+5.	Scroll down to the Case Status Picklist Values section and click New.
+6.	Type: In Progress
+7.	Click Save.
+
+PHASE 3 — CREATE CUSTOM FIELDS 
+    ✅ STEP 3: Create Custom Fields on the Case Object
+The Case object is Salesforce's built-in support ticket system. You are adding your custom fields to it for the Smart City project.
+How to reach the Case Fields section (do this ONCE):
+1.	Click ⚙️ Setup
+2.	At the TOP of the page, click Object Manager tab (It's right next to the "Home" tab at the top of the Setup page)
+3.	In the list that appears, find and click Case
+4.	In the left panel of the Case object, click Fields & Relationships
+5.	You will see a list of existing fields. Click New button (top right) to create each field.
+📌 FIELD 1 — Issue Type (Picklist)
+A picklist is a dropdown menu with options.
+Step-by-step:
+1.	Click New
+2.	A list of data types appears. Select Picklist (single select)
+3.	Click Next
+4.	Fill in:
+•	Field Label: Issue Type
+•	(Field Name auto-fills as Issue_Type — leave it)
+5.	Under Values, select: "Enter values, with each value on a separate line"
+6.	In the big text box, type each item on its own line:
+Pothole
+Streetlight
+Garbage
+Fire Outbreak
+Drainage Issues
+Water Leakage
+Open Electrical Wires
+Stray Dogs
+7.	Click Next
+8.	Click Next again (page layout step — leave defaults)
+9.	Click Save
+✅ Field 1 done!
+📌 FIELD 2 — Location (Text)
+Step-by-step:
+1.	Click New
+2.	Select Text
+3.	Click Next
+4.	Fill in:
+•	Field Label: Location
+•	Length: 255
+5.	Click Next → Next → Save
+✅ Field 2 done!
+📌 FIELD 3 — Urgency (Picklist)
+Step-by-step:
+1.	Click New
+2.	Select Picklist
+3.	Click Next
+4.	Fill in:
+•	Field Label: Urgency
+5.	Type values on separate lines:
+High
+Medium
+Low
+6.	Click Next → Next → Save
+✅ Field 3 done!
+📌 FIELD 4 — Attachment (URL)
+A URL field stores a web link (e.g., a Google Drive photo link).
+Step-by-step:
+1.	Click New
+2.	Select URL
+3.	Click Next
+4.	Fill in:
+•	Field Label: Attachment
+5.	Click Next → Next → Save
+✅ Field 4 done!
+📌 FIELD 5 — Citizen Contact (Phone)
+Step-by-step:
+1.	Click New
+2.	Select Phone
+3.	Click Next
+4.	Fill in:
+•	Field Label: Citizen Contact
+5.	Click Next → Next → Save
+✅ Field 5 done!
+📌 FIELD 6 — Reopen Form (Lookup Relationship to Case)
+This creates a field that links a "Reopen Case" to the original case.
+Step-by-step:
+1.	Click New
+2.	Select Lookup Relationship
+3.	Click Next
+4.	In the "Related To" dropdown, select Case
+5.	Click Next
+6.	Fill in:
+•	Field Label: Reopen Form
+7.	Click Next → Next → Next → Save
+✅ Field 6 done!
+📌 FIELD 7 — Citizen Email (Email)
+Step-by-step:
+1.	Click New
+2.	Select Email
+3.	Click Next
+4.	Fill in:
+•	Field Label: Citizen Email
+5.	Click Next → Next → Save
+✅ Field 7 done!
+📌 FIELD 8 — Citizen Name (Text)
+Step-by-step:
+1.	Click New
+2.	Select Text
+3.	Click Next
+4.	Fill in:
+•	Field Label: Citizen Name
+•	Length: 100
+5.	Click Next → Next → Save
+✅ Field 8 done!
+📌 FIELD 9 — Additional Details (Long Text Area)
+Step-by-step:
+1.	Click New
+2.	Select Long Text Area
+3.	Click Next
+4.	Fill in:
+•	Field Label: Additional Details
+•	Length: 32768
+•	Visible Lines: 5
+5.	Click Next → Next → Save
+✅ Field 9 done!
+ 
+
+PHASE 4 — SUPPORT PROCESS & RECORD TYPES
+✅ STEP 4.1: Create a Support Process
+A Support Process is required by Salesforce BEFORE you can create a Case Record Type. It controls the "Status" picklist values for your cases.
+Navigate to Support Processes:
+1.	Setup → Quick Find → type: Support Processes
+2.	Click Support Processes
+3.	Click New button
+Create "Smart City Support Process"
+1.	Fill in the form:
+•	Existing Support Process: (leave as Master)
+•	Support Process Name: Smart City Support
+•	Description: Used for Smart City cases
+2.	Click Save
+3.	On the next screen (Selected Values), just leave all the default Status values in the list.
+4.	Click Save again.
+✅ Support Process created! Now you can create Record Types.
+ 
+
+✅ STEP 4.2: Create Record Types
+Record Types let you show different forms for different scenarios. When an admin clicks "New Case", Salesforce will ask: "Which type?" → New Issue OR Reopen Case Each type can show a different form (page layout).
+Navigate to Record Types:
+1.	Setup → Object Manager → Case
+2.	On the left panel, click Record Types
+3.	Click New button
+4.2.1 — Create "New Issue" Record Type
+Fill in:
+Field	Value
+Existing Record Type	(leave as Master)
+Record Type Label	New Issue
+Record Type Name	Auto-fills as New_Issue — leave it
+Support Process	Select Smart City Support 👈 (Required)
+Description	Used for creating fresh citizen complaints
+Active	✅ Check this box
+
+1.	Under "Make Available", click Select All checkbox (This makes it available to all user profiles)
+2.	Click Next
+3.	On the Page Layout Assignment page, leave everything as default for now
+4.	Click Save
+✅ Record Type "New Issue" created!
+4.2.2 — Create "Reopen Case" Record Type
+1.	Click New again
+2.	Fill in:
+Field	Value
+Record Type Label	Reopen Case
+Record Type Name	Auto-fills as Reopen_Case — leave it
+Support Process	Select Smart City Support 👈 (Required)
+Description	Used for reopening previously closed cases
+Active	✅ Check this box
+3.	Click Select All for profiles
+4.	Click Next
+5.	Leave page layout assignment as default
+6.	Click Save
+✅ Record Type "Reopen Case" created!
+ 
+PHASE 5 — CREATE QUEUES (DEPARTMENTS)
+✅ STEP 5: Create Department Queues
+Queues are like department inboxes. When a case is created, the assignment rule sends it to the right department's queue. The department team can then see and work on all their cases.
+Navigate to Queues:
+1.	Click ⚙️ Setup
+2.	In the Quick Find box on the left, type: Queues
+3.	Click Queues
+4.	Click New
+5.1 — Create "Roads Department" Queue
+Fill in the form:
+Field	Value
+Label	Roads Department
+Queue Name	Auto-fills as Roads_Department — leave it
+Queue Email	roads@smartcity.com
+Send Email to Members	✅ Check if available
+Add supported object:
+1.	Scroll down to the "Supported Objects" section
+2.	In the left box, find Case
+3.	Click Case then click the Add arrow (→)
+4.	Case should now appear in the right box
+5.	Click Save
+✅ Roads Department queue created!
+5.2 — Create "Electrical Department" Queue
+1.	Click New
+2.	Fill in:
+•	Label: Electrical Department
+•	Queue Email: electrical@smartcity.com
+3.	Add Case to Supported Objects
+4.	Click Save
+5.3 — Create "Municipal Department" Queue
+1.	Click New
+2.	Fill in:
+•	Label: Municipal Department
+•	Queue Email: municipal@smartcity.com
+3.	Add Case to Supported Objects
+4.	Click Save
+5.4 — Create "Fire Department" Queue
+1.	Click New
+2.	Fill in:
+•	Label: Fire Department
+•	Queue Email: fire@smartcity.com
+3.	Add Case to Supported Objects
+4.	Click Save
+5.5 — Create "Water Department" Queue
+1.	Click New
+2.	Fill in:
+•	Label: Water Department
+•	Queue Email: water@smartcity.com
+3.	Add Case to Supported Objects
+4.	Click Save
+✅ All 5 Queues Created!
+Queue	Routes to Dept. for
+Roads Department	Pothole
+Electrical Department	Streetlight, Open Electrical Wires
+Municipal Department	Garbage, Drainage Issues, Stray Dogs
+Fire Department	Fire Outbreak
+Water Department	Water Leakage
+
+              
+PHASE 6 — CREATE PAGE LAYOUTS
+✅ STEP 6: Create Page Layouts
+A Page Layout controls what fields the admin sees when creating or editing a case. You need 2 different layouts — one for new complaints and one for reopening cases.
+Navigate to Page Layouts:
+1.	Setup → Object Manager → Case
+2.	Click Page Layouts in the left panel
+6.1 — Create "New Issue Layout"
+1.	Click New button
+2.	In the dialog:
+•	Existing Page Layout: Select Case Layout (to copy it)
+•	Page Layout Name: New Issue Layout
+3.	Click Save
+The Page Layout Editor opens. It has:
+•	A palette at the top (all available fields)
+•	The layout canvas below (what the form looks like)
+Add your custom fields to the layout:
+1.	In the palette at the top, find the Fields section
+2.	Find these fields by scrolling or searching in the palette:
+•	Issue Type — drag it to the layout canvas
+•	Location — drag it to the canvas
+•	Urgency — drag it to the canvas
+•	Attachment — drag it to the canvas
+•	Citizen Contact — drag it to the canvas
+•	Citizen Email — drag it to the canvas
+•	Citizen Name — drag it to the canvas
+•	Additional Details — drag it to the canvas
+How to drag fields: Click and hold a field in the palette, then drag it down to the section you want in the layout canvas. Drop it between existing fields.
+3.	Make sure these built-in fields are also visible in the layout:
+•	Subject
+•	Status
+•	Priority
+•	Description
+•	Case Owner
+4.	Click Save (top right of page layout editor)
+✅ New Issue Layout saved!
+6.2 — Create "Reopen Case Layout"
+1.	Click New button again
+2.	In the dialog:
+•	Existing Page Layout: Select Case Layout
+•	Page Layout Name: Reopen Case Layout
+3.	Click Save
+Add these fields to the Reopen Case Layout:
+•	Reopen Form (lookup to original case)
+•	Citizen Name
+•	Citizen Email
+•	Citizen Contact
+•	Issue Type
+•	Additional Details
+•	Status
+4.	Click Save
+✅ Reopen Case Layout saved!
+
+PHASE 7 — ASSIGN LAYOUTS TO RECORD TYPES
+✅ STEP 7: Assign Page Layouts to Record Types
+This tells Salesforce: "When admin selects New Issue, show New Issue Layout. When admin selects Reopen Case, show Reopen Case Layout."
+7.1 — Assign Layout to "New Issue" Record Type
+1.	Setup → Object Manager → Case → Record Types
+2.	Click on New Issue (from the list)
+3.	Scroll down to find "Page Layout Assignment" section
+4.	Click Edit next to the Page Layout Assignment table
+5.	For each profile (especially System Administrator), select New Issue Layout from the dropdown
+6.	Click Save
+7.2 — Assign Layout to "Reopen Case" Record Type
+1.	In Record Types list, click on Reopen Case
+2.	Scroll to Page Layout Assignment → Click Edit
+3.	For System Administrator profile, select Reopen Case Layout
+4.	Click Save
+✅ Layouts assigned to Record Types!
+ 
+
+PHASE 8 — CASE ASSIGNMENT RULES
+✅ STEP 8: Create Case Assignment Rules
+Assignment Rules automatically check the Issue Type field and send the case to the correct department queue.
+8.1 — Create the Assignment Rule
+1.	Setup → Quick Find → type: Case Assignment Rules
+2.	Click Case Assignment Rules
+3.	Click New
+4.	Fill in:
+•	Rule Name: Smart City Issue Assignment
+•	Check Active ✅
+5.	Click Save
+8.2 — Open the Rule to Add Entries
+1.	Click on Smart City Issue Assignment (from the list)
+2.	Under Rule Entries, click New
+8.3 — Add Rule Entry 1: Pothole → Roads Department
+Fill in:
+Field	Value
+Order	1
+Criteria	(explained below)
+Assign To	(explained below)
+Setting the Criteria:
+1.	Under "Run this rule if the following", select criteria are met
+2.	Row 1:
+•	Field: Case: Issue Type
+•	Operator: equals
+•	Value: Pothole
+Setting the Assignment:
+1.	Under "Assign To"
+2.	Select: Queue (radio button)
+3.	Click the search icon 🔍 next to the Queue field
+4.	Type Roads → click Search → select Roads Department
+5.	Click Save & New (to immediately create the next entry)
+8.4 — Add Entry 2: Streetlight → Electrical Department
+Order	Field	Operator	Value	Assign To (Queue)
+2	Case: Issue Type	equals	Streetlight	Electrical Department
+Click Save & New
+8.5 — Add Entry 3: Garbage → Municipal Department
+Order	Value	Queue
+3	Garbage	Municipal Department
+Click Save & New
+8.6 — Add Entry 4: Fire Outbreak → Fire Department
+Order	Value	Queue
+4	Fire Outbreak	Fire Department
+Click Save & New
+8.7 — Add Entry 5: Drainage Issues → Municipal Department
+Order	Value	Queue
+5	Drainage Issues	Municipal Department
+Click Save & New
+
+8.8 — Add Entry 6: Water Leakage → Water Department
+Order	Value	Queue
+6	Water Leakage	Water Department
+Click Save & New
+8.9 — Add Entry 7: Open Electrical Wires → Electrical Department
+Order	Value	Queue
+7	Open Electrical Wires	Electrical Department
+Click Save & New
+
+8.10 — Add Entry 8: Stray Dogs → Municipal Department
+Order	Value	Queue
+8	Stray Dogs	Municipal Department
+Click Save (not Save & New — this is the last one)
+8.11 — Enable Assignment Rule on the Case Layout
+For auto-assignment to work, the Case must be configured to use the rule:
+1.	Setup → Object Manager → Case → Page Layouts
+2.	Open New Issue Layout
+3.	Look at the palette at the top of the layout editor (the gray box where you drag fields from)
+4.	At the top-center of that gray box, click the button that says Layout Properties (it has a little wrench/gear icon next to it)
+5.	A popup window will appear. Scroll down the popup to find the "Case Assignment Checkbox" section
+6.	In that section, check the box for "Show on edit page"
+7.	Also check the box for "Default" (this forces it to run automatically)
+8.	Click OK on the popup
+9.	Click Save at the top of the Page Layout Editor
+
+ 
+
+
+PHASE 9 — EMAIL TEMPLATES
+✅ STEP 9: Create Email Templates
+Email Templates are the actual messages sent to citizens. You need 3 templates: one when case is received, one when in-progress, and one when resolved.
+Navigate to Email Templates:
+1.	Setup → Quick Find → type: Classic Email Templates
+2.	Click Classic Email Templates
+3.	Click New Template
+9.1 — Template 1: Case Received
+1.	Select Text → Click Next
+2.	Fill in:
+Field	Value
+Folder	My Personal Email Templates
+Available For Use	✅ Check this
+Template Name	Case Received
+Template Unique Name	Auto-fills — leave it
+Description	Sent when a new case is submitted
+Subject	Your Complaint Has Been Received – Case {!Case.CaseNumber}
+3.	In the Email Body box, paste this:
+Dear {!Case.Citizen_Name__c},
+Thank you for contacting the Smart City Support Team. We have successfully received your complaint and it has been registered in our system.
+Here are your case details:
+Case Number      : {!Case.CaseNumber}
+Issue Type       : {!Case.Issue_Type__c}
+Location         : {!Case.Location__c}
+Urgency Level    : {!Case.Urgency__c}
+Date Submitted   : {!Case.CreatedDate}
+Current Status   : New
+Our concerned department will review your complaint and take appropriate action shortly. You will receive further updates via email.
+Thank you for helping us make our city better!
+Regards,
+Smart City Support Team
+Municipal Corporation
+4.	Click Save
+✅ Template 1 saved!
+9.2 — Template 2: Case In Progress
+1.	Click New Template → Select Text → Click Next
+2.	Fill in:
+Field	Value
+Template Name	Case In Progress
+Subject	Update: Your Case {!Case.CaseNumber} is Now In Progress
+3.	Email Body:
+Dear {!Case.Citizen_Name__c},
+We wanted to keep you informed that your reported issue is currently being worked on by our team.
+Case Details:
+Case Number      : {!Case.CaseNumber}
+Issue Type       : {!Case.Issue_Type__c}
+Location         : {!Case.Location__c}
+Urgency Level    : {!Case.Urgency__c}
+Current Status   : In Progress
+Our team is actively investigating the problem and working towards a resolution. We will notify you once the issue has been resolved.
+Thank you for your patience.
+Regards,
+Smart City Support Team
+Municipal Corporation
+4.	Click Save
+✅ Template 2 saved!
+9.3 — Template 3: Case Resolved
+1.	Click New Template → Select Text → Click Next
+2.	Fill in:
+Field	Value
+Template Name	Case Resolved
+Subject	Resolved: Your Case {!Case.CaseNumber} Has Been Closed
+3.	Email Body:
+Dear {!Case.Citizen_Name__c},
+We are pleased to inform you that your reported issue has been successfully resolved and the case has been closed.
+Case Details:
+Case Number      : {!Case.CaseNumber}
+Issue Type       : {!Case.Issue_Type__c}
+Location         : {!Case.Location__c}
+Urgency Level    : {!Case.Urgency__c}
+Resolution Status: Resolved / Closed
+We hope the issue has been addressed to your satisfaction. If the problem persists or you are not satisfied with the resolution, you may request to reopen the case after 7 days from the closure date.
+Thank you for your cooperation and for helping us serve the city better!
+Regards,
+Smart City Support Team
+Municipal Corporation
+4.	Click Save
+✅ Template 3 saved!
+ 
+
+PHASE 10 — EMAIL ALERTS
+✅ STEP 10: Create Email Alerts
+An Email Alert connects an Email Template to a specific field (Citizen Email). It tells Salesforce: "When triggered, use THIS template and send to THIS address."
+Navigate to Email Alerts:
+1.	Setup → Quick Find → type: Email Alerts
+2.	Click Email Alerts
+3.	Click New Email Alert
+10.1 — Alert 1: Case Received Alert
+Fill in:
+Field	Value
+Description	Case Received Alert
+Unique Name	Auto-fills — leave it
+Object	Case
+Email Template	Click search icon 🔍 → find and select Case Received
+From Email Address	Select: Current User's Email or Default Workflow User
+Adding Recipients:
+1.	Under Recipient Type, select: Email Field
+2.	A new dropdown appears → Select: Citizen Email
+3.	Click the Add button
+4.	Citizen Email should now appear in the "Selected Recipients" box
+5.	Click Save
+✅ Email Alert 1 done!
+10.2 — Alert 2: Case In Progress Alert
+1.	Click New Email Alert
+2.	Fill in:
+Field	Value
+Description	Case In Progress Alert
+Object	Case
+Email Template	Case In Progress
+3.	Recipient Type: Email Field → Select Citizen Email → Click Add
+4.	Click Save
+✅ Email Alert 2 done!
+10.3 — Alert 3: Case Resolved Alert
+1.	Click New Email Alert
+2.	Fill in:
+Field	Value
+Description	Case Resolved Alert
+Object	Case
+Email Template	Case Resolved
+3.	Recipient Type: Email Field → Select Citizen Email → Click Add
+4.	Click Save
+✅ Email Alert 3 done!
+ 
+
+PHASE 11 — WORKFLOW RULES
+✅ STEP 11: Create Workflow Rules
+Workflow Rules are triggers. They watch for a condition (e.g., Status = New) and when that condition is true, they fire an action (send an email alert).
+Navigate to Workflow Rules:
+1.	Setup → Quick Find → type: Workflow Rules
+2.	Click Workflow Rules
+3.	Click New Rule
+11.1 — Workflow Rule 1: "Case Received – Send Email"
+Step 1: Select Object
+•	Select Case from the dropdown
+•	Click Next
+Field	Value
+Rule Name	Case Received – Send Email
+Description	Sends email to citizen when case is first created
+Evaluation Criteria	Select: "Created"
+Step 2: Configure the Rule
+
+
+
+
+
+Filter Criteria (condition to check):
+•	Row 1: Field = Case: Status | Operator = equals | Value = New
+Click Save & Next
+Step 3: Add Workflow Action
+1.	Click Add Workflow Action
+2.	Select Select Existing Action
+3.	In the pop-up, Action Type = Email Alert
+4.	Search for: Case Received Alert
+5.	Click on it to select it
+6.	Click Done
+Step 4: Activate the Rule
+1.	Click Done
+2.	You will see the rule listed — it says Inactive
+3.	Click Activate button next to it
+✅ Workflow Rule 1 ACTIVE!
+11.2 — Workflow Rule 2: "Case In Progress – Send Email"
+1.	Click New Rule
+2.	Object: Case → Click Next
+Field	Value
+Rule Name	Case In Progress – Send Email
+Evaluation Criteria	"Created, and any time it's edited to subsequently meet the criteria"
+Filter	Status = In Progress
+3.	Click Save & Next
+4.	Add workflow action → Select Existing → Email Alert → Case In Progress Alert
+5.	Click Done
+6.	Click Activate
+✅ Workflow Rule 2 ACTIVE!
+11.3 — Workflow Rule 3: "Case Resolved – Send Email"
+1.	Click New Rule
+2.	Object: Case → Click Next
+Field	Value
+Rule Name	Case Resolved – Send Email
+Evaluation Criteria	"Created, and any time it's edited to subsequently meet the criteria"
+Filter	Status = Closed
+3.	Click Save & Next
+4.	Add workflow action → Select Existing → Email Alert → Case Resolved Alert
+5.	Click Done
+6.	Click Activate
+✅ Workflow Rule 3 ACTIVE!
+
+ 
+
+
+ 
+PHASE 12 — VALIDATION RULE
+✅ STEP 12: Create the Validation Rule (Reopen After 7 Days)
+This rule blocks saving a "Reopen Case" if the original case was closed less than 7 days ago. It shows an error message to the admin.
+Navigate to Validation Rules:
+1.	Setup → Object Manager → Case
+2.	On the left, click Validation Rules
+3.	Click New
+Fill in the Validation Rule:
+Field	Value
+Rule Name	Reopen_After_7_Days
+Active	✅ Check this box
+Description	Prevents reopening a case that was closed less than 7 days ago
+
+The Formula:
+In the "Error Condition Formula" text box, paste this exactly:
+AND(
+  RecordType.DeveloperName = "Reopen_Case",
+  NOT(ISBLANK(Reopen_Form__c)),
+  NOT(ISBLANK(Reopen_Form__r.ClosedDate)),
+  (TODAY() - DATEVALUE(Reopen_Form__r.ClosedDate)) < 7
+)
+What this formula does (plain English):
+•	RecordType.DeveloperName = "Reopen_Case" → Only applies when admin chose "Reopen Case" record type
+•	NOT(ISBLANK(Reopen_Form__c)) → Checks that the lookup field is actually filled out
+•	NOT(ISBLANK(Reopen_Form__r.ClosedDate)) → Goes and looks at the original case and checks if it has a close date
+•	(TODAY() - DATEVALUE(Reopen_Form__r.ClosedDate)) < 7 → Compares today's date to the original case's close date
+
+To check your formula is correct, click the "Check Syntax" button below the formula box. It should say: "No Syntax Errors"
+
+Error Message:
+Field	Value
+Error Message	This case cannot be reopened yet. Please wait at least 7 days after the case was closed before submitting a reopen request.
+Error Location	Top of Page
+
+Click Save
+✅ Validation Rule created!
+
+PHASE 13 — PERMISSION SETS
+✅ STEP 13: Create Permission Sets
+Permission Sets give specific users the ability to view/create/edit/delete cases and custom fields — without changing their main profile.
+Navigate to Permission Sets:
+1.	Setup → Quick Find → type: Permission Sets
+2.	Click Permission Sets
+3.	Click New
+ 
+13.1 — Create "Smart City Admin" Permission Set
+Field	Value
+Label	Smart City Admin
+API Name	Auto-fills as Smart_City_Admin
+Description	Full access to Smart City Case management
+License	Salesforce
+Click Save
+13.2 — Configure Object Permissions
+1.	Click on Smart City Admin from the list
+2.	Click Object Settings
+3.	Find and click Cases
+4.	Click Edit
+5.	Check these boxes under Object Permissions:
+Permission	Check?
+Read	✅
+Create	✅
+Edit	✅
+Delete	✅
+View All	✅
+Modify All	✅
+6.	Under Case: Record Type Assignments, check the boxes for:
+•	✅ New Issue
+•	✅ Reopen Case
+7.	Scroll down to Field Permissions and for ALL your custom fields, check:
+•	✅ Read Access
+•	✅ Edit Access
+Custom fields to check:
+•	Issue Type
+•	Location
+•	Urgency
+•	Attachment
+•	Citizen Contact
+•	Reopen Form
+•	Citizen Email
+•	Citizen Name
+•	Additional Details
+8.	Click Save
+13.3 — Assign Permission Set to Your User
+1.	Setup → Quick Find → Users
+2.	Click Users
+3.	Click on your username (the one you used to log in)
+4.	Scroll down on your user record
+5.	Find the "Permission Set Assignments" section
+6.	Click Edit Assignments
+7.	In the left box, find Smart City Admin
+8.	Click Add (arrow →) — it should move to the right "Enabled" box
+9.	Click Save
+✅ Permission Set assigned!
+ 
+
+PHASE 14 — REPORTS
+✅ STEP 14: Create Reports
+Reports are like live data tables that show you case statistics. You need 4 reports to power your dashboard.
+Navigate to Reports:
+1.	Click the App Launcher (9-dot grid icon, top left)
+2.	Type Reports in the search box
+3.	Click Reports
+4.	Click New Report
+14.1 — Report 1: All Cases by Department
+Step 1: Choose Report Type
+1.	In the search box, type Cases
+2.	Select Cases (simple, single object)
+3.	Click Start Report
+Step 2: Configure the Report
+The report builder opens. On the left panel:
+1.	Click Outline tab
+2.	Under Group Rows, click Add group
+•	Select: Case Owner (this shows the Queue/Department)
+3.	Under Columns, add these by clicking Add column:
+•	Case Number
+•	Issue Type
+•	Status
+•	Urgency
+•	Location
+•	Created Date
+•	Case Owner
+Step 3: Set Filters
+1.	Click the Filters tab
+2.	Show: All Cases
+3.	Date Range: All Time
+Step 4: Save
+1.	Click Save & Run (top right)
+2.	Report Name: All Cases by Department
+3.	Folder: Choose your folder or My Personal Reports
+4.	Click Save
+✅ Report 1 done!
+14.2 — Report 2: Cases by Status
+1.	Click New Report → Select Cases → Start Report
+2.	Group Rows by: Status
+3.	Columns: Case Number, Issue Type, Urgency, Citizen Name, Location, Created Date
+4.	Save as: Cases by Status
+✅ Report 2 done!
+14.3 — Report 3: Cases by Issue Type
+1.	Click New Report → Select Cases → Start Report
+2.	Group Rows by: Issue Type
+3.	Columns: Case Number, Status, Urgency, Location, Created Date
+4.	Save as: Cases by Issue Type
+✅ Report 3 done!
+14.4 — Report 4: High Urgency Open Cases
+1.	Click New Report → Select Cases → Start Report
+2.	No grouping needed (keep as tabular)
+3.	Columns: Case Number, Issue Type, Location, Citizen Name, Created Date, Status
+4.	Add Filters:
+•	Filter 1: Status not equal to Closed
+•	Filter 2: Urgency equals High
+5.	Save as: High Urgency Open Cases
+✅ Report 4 done!
+ 
+
+PHASE 15 — DASHBOARD
+✅ STEP 15: Create the Smart City Dashboard
+A Dashboard is a visual screen with charts and tables powered by your reports. It gives management a bird's-eye view.
+Navigate to Dashboards:
+1.	App Launcher → Search: Dashboards → Click Dashboards
+2.	Click New Dashboard
+15.1 — Create Dashboard
+1.	Dashboard Name: Smart City Overview
+2.	Description: Overview of all Smart City issues by department, status, and urgency
+3.	Folder: My Personal Dashboards
+4.	Click Create
+The Dashboard Builder opens. It's a blank canvas.
+15.2 — Add Component 1: Cases by Department (Donut Chart)
+1.	Click + Widget button (blue button at the top)
+2.	Select Chart or Table (if prompted)
+3.	On the left, search for report: All Cases by Department
+4.	Click on it to select it
+5.	On the right, configure:
+•	Chart Type: Donut
+•	Title: Cases by Department
+6.	Click Add
+7.	The donut chart appears on the canvas. Drag it to position it.
+15.3 — Add Component 2: Cases by Status (Bar Chart)
+1.	Click + Widget button
+2.	Select Chart or Table (if prompted)
+3.	Select report: Cases by Status
+4.	Configure:
+•	Chart Type: Vertical Bar Chart
+•	Title: Cases by Status
+5.	Click Add
+15.4 — Add Component 3: Cases by Issue Type (Pie Chart)
+1.	Click + Widget button
+2.	Select Chart or Table (if prompted)
+3.	Select report: Cases by Issue Type
+4.	Configure:
+•	Chart Type: Pie
+•	Title: Cases by Issue Type
+5.	Click Add
+15.5 — Add Component 4: High Urgency Cases (Table)
+1.	Click + Widget button
+2.	Select Chart or Table (if prompted)
+3.	Select report: High Urgency Open Cases
+4.	Configure:
+•	Chart Type: Lightning Table
+•	Title: High Urgency Open Cases
+•	Max Rows: 10
+5.	Click Add
+15.6 — Save the Dashboard
+1.	Arrange the 4 components on the canvas (drag to resize/move)
+2.	Click Save (top right)
+3.	Click Done
+✅ Dashboard complete!
+ 
+
+PHASE 16 — TEST YOUR ENTIRE PROJECT
+✅ STEP 16: End-to-End Testing
+Testing verifies that everything you built actually works correctly. Follow each test case below.
+🧪 TEST 1: Create a New Issue Case (Pothole)
+Goal: Verify case creation, record type selection, and department assignment.
+
+ 
+Steps:
+1.	Click App Launcher → Cases (or Cases from the nav bar)
+2.	Click New button
+3.	A popup appears: "Select a Record Type"
+•	Choose: New Issue
+•	Click Continue
+       
+4.	The New Issue Layout form opens. Fill in:
+•	Subject: Large pothole on MG Road
+•	Citizen Name: Rajesh Kumar
+•	Citizen Email: rajesh.kumar@test.com
+•	Citizen Contact: 9876543210
+•	Issue Type: Pothole
+•	Location: MG Road, Sector 5, near Bus Stop
+•	Urgency: High
+•	Status: New
+•	Additional Details: There is a large pothole causing bike accidents
+5.	Click Save
+Expected Results:
+•	✅ Case is created successfully with a Case Number (e.g., 00001001)
+•	✅ Case Owner shows Roads Department (assignment rule worked!)
+•	✅ Email sent to rajesh.kumar@test.com (check your email logs)
+🧪 TEST 2: Update Case to "In Progress"
+Goal: Verify that changing status triggers the "In Progress" email.
+Steps:
+1.	Open the case you just created (00001001)
+2.	Click Edit
+3.	Change Status to In Progress
+4.	Click Save
+Expected Results:
+•	✅ Case saves successfully
+•	✅ "Case In Progress" email sent to rajesh.kumar@test.com
+🧪 TEST 3: Close/Resolve the Case
+Goal: Verify that closing triggers the "Resolved" email.
+Steps:
+1.	Open the same case
+2.	Click Edit
+3.	Change Status to Closed
+4.	Click Save
+Expected Results:
+•	✅ Case is now Closed
+•	✅ "Case Resolved" email sent to citizen
+🧪 TEST 4: Try to Reopen Case Within 7 Days (Should FAIL)
+Goal: Verify the validation rule blocks early reopening.
+ 
+Steps:
+1.	Click New to create a new case
+2.	Select Record Type: Choose Reopen Case → Click Continue
+3.	The Reopen Case Layout form opens
+4.	In the Reopen Form lookup field, search for and select the case you just closed
+5.	Fill in Citizen Name, Email, Contact, Issue Type
+6.	Set the Status to New
+7.	Click Save
+Expected Results:
+•	✅ An error message appears at the top of the page:
+"This case cannot be reopened yet. Please wait at least 7 days after the case was closed before submitting a reopen request."
+•	✅ The case is NOT saved
+🧪 TEST 5: Create a Streetlight Issue Case
+Goal: Verify routing to Electrical Department.
+ 
+Steps:
+1.	New Case → New Issue record type
+2.	Issue Type: Streetlight
+3.	Fill other fields
+4.	Click Save
+Expected Results:
+•	✅ Case Owner = Electrical Department
+🧪 TEST 6: Verify All 8 Assignment Rules Work
+Create one test case for each Issue Type and verify the queue assigned:
+Issue Type to Select	Expected Queue
+Pothole	Roads Department
+Streetlight	Electrical Department
+Garbage	Municipal Department
+Fire Outbreak	Fire Department
+Drainage Issues	Municipal Department
+Water Leakage	Water Department
+Open Electrical Wires	Electrical Department
+Stray Dogs	Municipal Department
+
+🧪 TEST 7: View Dashboard
+Goal: Verify dashboard shows real data.
+Steps:
+1.	App Launcher → Dashboards → Smart City Overview
+2.	Click Refresh button
+3.	Look at all 4 charts
+Expected Results:
+•	✅ Donut chart shows cases split by department
+•	✅ Bar chart shows cases by status (New, In Progress, Closed)
+•	✅ Pie chart shows cases split by issue type
+•	✅ Table shows any High Urgency open cases
+🧪 TEST 8: Create Another New Issue (Garbage)
+Goal: Provide more test cases to see data in the reports and dashboard.
+ 
+Steps:
+1.	Click Cases → New
+2.	Select Record Type: New Issue
+3.	Fill in:
+•	Subject: Overflowing Garbage Bin
+•	Citizen Name: Priya Sharma
+•	Citizen Email: priya.sharma@test.com (Use your own if you want the email)
+•	Citizen Contact: 9811223344
+•	Issue Type: Garbage
+•	Location: Sector 12 Market Area
+•	Urgency: Medium
+•	Status: New
+•	Additional Details: The garbage bin has not been cleared for 3 days and is spilling onto the street.
+4.	Click Save
+Expected Results:
+•	✅ Case Owner shows Municipal Department
+•	✅ Dashboard "Cases by Issue Type" pie chart will update when refreshed.
+🧪 TEST 9: Create Another New Issue (Water Leakage)
+Goal: Test mapping to the Water Department.
+Steps:
+1.	Click Cases → New
+2.	Select Record Type: New Issue
+3.	Fill in:
+•	Subject: Major pipeline burst
+•	Citizen Name: Amit Patel
+•	Citizen Email: amit.patel@test.com
+•	Citizen Contact: 9988776655
+•	Issue Type: Water Leakage
+•	Location: Main Road, Phase 2
+•	Urgency: High
+•	Status: New
+•	Additional Details: Thousands of liters of water wasting due to a broken main pipe.
+4.	Click Save
+Expected Results:
+•	✅ Case Owner shows Water Department
+•	✅ This case will appear in the "High Urgency Open Cases" table on the Dashboard.
+
